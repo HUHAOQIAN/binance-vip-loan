@@ -8,6 +8,6 @@ const colleteralCoin = "TUSD"; //修改 抵押币种 多币种 逗号隔开 "TUS
 
 ts-node loan/run-vip-loan.ts
 
-## 还款全部币种
+### 还款全部币种
 
 ts-node loan/repay-borrow.ts
