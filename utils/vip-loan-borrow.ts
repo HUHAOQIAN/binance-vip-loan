@@ -1,5 +1,5 @@
 import { BinanceAccountInfo, binanceRequest } from "./signature";
-import { LILEIBinanceAccount } from "./helper";
+import { BinanceAccount } from "./helper";
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -162,7 +162,7 @@ export async function vipLoanAll(
   try {
     const uid = "122974375";
     const loan = await binanceVipLoanBorrow(
-      LILEIBinanceAccount,
+      BinanceAccount,
       uid,
       loanCoin,
       loanAmount,
@@ -173,7 +173,7 @@ export async function vipLoanAll(
     );
     const loanAccountId = loan.loanAccountId;
     const requestStatus = await vipLoanRequestData(
-      LILEIBinanceAccount,
+      BinanceAccount,
       loanAccountId
     );
     return requestStatus;

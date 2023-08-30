@@ -6,11 +6,8 @@ import {
   vipLoanRequestData,
   vipLoanAll,
 } from "../utils/vip-loan-borrow";
-import { LILEIBinanceAccount } from "../utils/helper";
+import { BinanceAccount } from "../utils/helper";
 
-const borrowCoin = "BLZ";
-const borrowAmount = "450000";
-const colleteralCoin = "TUSD";
 async function run() {
   let hasBorrowed = false; // 标志来表示是否已经借到
   while (!hasBorrowed) {
@@ -36,4 +33,8 @@ async function run() {
     }
   }
 }
+
+const borrowCoin = "BLZ"; //修改 借币种
+const borrowAmount = "450000"; //修改 借币数量
+const colleteralCoin = "TUSD"; //修改 抵押币种  多币种  逗号隔开  "TUSD,BUSD,USDT"
 run();
