@@ -1,5 +1,5 @@
-import { BinanceAccountInfo, binanceRequest } from "./signature";
-import { BinanceAccount } from "./helper";
+import { BinanceAccountInfo, binanceRequest } from "../utils/signature";
+import { BinanceAccount } from "../utils/helper";
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -171,6 +171,7 @@ export async function vipLoanAll(
       isFlexibleRate,
       loanTerm
     );
+    console.log(`loan id: ${loan.loanAccountId}`);
     const loanAccountId = loan.loanAccountId;
     const requestStatus = await vipLoanRequestData(
       BinanceAccount,

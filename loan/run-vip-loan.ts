@@ -5,7 +5,7 @@ import {
   sleep,
   vipLoanRequestData,
   vipLoanAll,
-} from "../utils/vip-loan-borrow";
+} from "./vip-loan-borrow";
 import { BinanceAccount } from "../utils/helper";
 
 async function run() {
@@ -28,13 +28,14 @@ async function run() {
         });
       }
       await Promise.all(loans);
+      await sleep(10000);
     } catch (e) {
       console.error(e);
     }
   }
 }
 
-const borrowCoin = "BLZ"; //修改 借币种
-const borrowAmount = "450000"; //修改 借币数量
+const borrowCoin = "GOE"; //修改 借币种
+const borrowAmount = "19000"; //修改 借币数量
 const colleteralCoin = "TUSD"; //修改 抵押币种  多币种  逗号隔开  "TUSD,BUSD,USDT"
 run();

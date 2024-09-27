@@ -1,4 +1,3 @@
 import { BinanceAccount } from "../utils/helper";
-import { getOngoingOrders } from "../utils/vip-loan-borrow";
-
+import { getOngoingOrders } from "./vip-loan-borrow";
 getOngoingOrders(BinanceAccount);
