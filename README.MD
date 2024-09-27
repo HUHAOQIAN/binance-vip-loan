@@ -11,3 +11,7 @@ ts-node loan/run-vip-loan.ts
 ### 还款全部币种
 
 ts-node loan/repay-borrow.ts
+
+### 运行 kr 所监控并且借贷
+
+ts-node kr-exchanges-reminder/upbit-reminder-loan.ts
