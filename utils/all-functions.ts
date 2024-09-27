@@ -63,5 +63,5 @@ export async function getTicker(symbol: string): Promise<number> {
   const url = `https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`;
   const res = await fetch(url);
   const data = await res.json();
-  return data.price;
+  return Number(data.price);
 }
