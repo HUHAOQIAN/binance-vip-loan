@@ -54,3 +54,13 @@ export async function sleep(ms: number) {
     setTimeout(resolve, ms);
   });
 }
+import readlineSync from "readline-sync";
+import { decryptData } from "./encrypt-data";
+const pass = readlineSync.question("Please enter  the api password: ", {
+  hideEchoBack: true,
+});
+
+export const BINANCE_API_SECRET = {
+  apiKey: decryptData(process.env.API_KEY_BINANCE!, pass),
+  secretKey: decryptData(process.env.SECRET_KEY_BINANCE!, pass),
+};

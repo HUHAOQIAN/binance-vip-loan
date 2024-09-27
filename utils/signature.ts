@@ -1,11 +1,12 @@
 import axios from "axios";
-import * as crypto from "crypto";
+import crypto from "crypto";
 import { SocksProxyAgent } from "socks-proxy-agent";
 
 export type HeadersBinance = {
   "X-MBX-APIKEY": string; // 把你的 API 密钥放在 'X-MBX-APIKEY' 头中
 };
 export type BinanceAccountInfo = {
+  mail?: string;
   apiKey: string;
   secretKey: string;
 };
@@ -26,13 +27,17 @@ export async function binanceRequest(
   method: HttpMethod,
   queryString: string | null,
   requestBody: URLSearchParams | null,
-  proxy?: SocksProxyAgent
+  proxy?: SocksProxyAgent,
+  marketType: "spot" | "future" = "spot" // 默认为 spot
 ) {
   const headers: HeadersBinance = {
     "X-MBX-APIKEY": apiKey,
   };
-
-  const baseURL = "https://api4.binance.com";
+  const baseURL =
+    marketType === "spot"
+      ? "https://api4.binance.com"
+      : "https://fapi.binance.com";
+  // const baseURL = "https://api4.binance.com";
   let url = `${baseURL}${endpointPath}`;
   let signature;
   if (queryString) {
@@ -50,7 +55,7 @@ export async function binanceRequest(
       url,
       method,
       headers,
-      data: method === "POST" ? requestBody : undefined,
+      params: requestBody || undefined,
       httpAgent: proxy,
       httpsAgent: proxy,
     });

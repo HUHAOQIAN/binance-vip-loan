@@ -1,5 +1,9 @@
 import { promises } from "dns";
-import { dingding, dingdingWithTimes } from "../utils/helper";
+import {
+  BINANCE_API_SECRET,
+  dingding,
+  dingdingWithTimes,
+} from "../utils/helper";
 import { BinanceAccountInfo } from "../utils/signature";
 import { borrwoWithUsdt } from "../loan/margin-borrow-repay";
 import { binanceVipLoanBorrow } from "../loan/vip-loan-borrow";
@@ -90,12 +94,7 @@ async function checkForUpdates(
 }
 
 // 定时检查公告更新，每分钟检查一次
-import dotenv from "dotenv";
-dotenv.config();
-const account: BinanceAccountInfo = {
-  apiKey: process.env.API_KEY_BINANCE,
-  secretKey: process.env.SECRET_KEY_BINANCE,
-};
+const account = BINANCE_API_SECRET;
 
 // 参数1：账号信息
 // 参数2：借贷金额 usdt
@@ -104,9 +103,9 @@ const account: BinanceAccountInfo = {
 // 参数5：vip借贷金额 usdt
 const uid = "";
 setInterval(
-  () => checkForUpdates(account, 30000, uid, "TUSD", 10000), //主账号借5wu 的新上upbit 的币
+  () => checkForUpdates(account, 100, uid, "TUSD", 10000), //主账号借5wu 的新上upbit 的币
   10000
 );
 
 // 初次运行时立即检查一次
-checkForUpdates(account, 30000, uid, "TUSD", 10000);
+checkForUpdates(account, 100, uid, "TUSD", 10000);

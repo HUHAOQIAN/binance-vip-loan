@@ -6,14 +6,18 @@ import {
   vipLoanRequestData,
   vipLoanAll,
 } from "./vip-loan-borrow";
-import { BinanceAccount } from "../utils/helper";
+import { BINANCE_API_SECRET } from "../utils/helper";
+import { getTicker } from "../utils/all-functions";
 
 async function run() {
   let hasBorrowed = false; // 标志来表示是否已经借到
   const uid = ""; // 修改为自己的uid
   while (!hasBorrowed) {
     // 只要没有借到就继续
+
     try {
+      const price = await getTicker(borrowCoin + "USDT");
+      const borrowAmount = (Number(borrowAmountUSDT) / price).toFixed(2);
       const loans = [
         vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, uid),
         vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, "30", uid),
@@ -37,6 +41,6 @@ async function run() {
 }
 
 const borrowCoin = "GOE"; //修改 借币种
-const borrowAmount = "19000"; //修改 借币数量
+const borrowAmountUSDT = "19000"; //修改 借多少usdt 的币
 const colleteralCoin = "TUSD"; //修改 抵押币种  多币种  逗号隔开  "TUSD,BUSD,USDT"
 run();
