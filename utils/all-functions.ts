@@ -43,8 +43,6 @@ export async function getFundingAsset(
   console.log(res);
   return res;
 }
-// getFundingAsset(Binance576029988, "USDT");
-// assetTransfer(Binance576029988, "FUNDING_MAIN", "USDT", "100");
 
 export async function walletBalance(account: BinanceAccountInfo, ccy: string) {
   const endpointPath = "/sapi/v3/asset/getUserAsset";
