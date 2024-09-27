@@ -78,7 +78,6 @@ async function checkForUpdates(
             true
           ),
         ]);
-        // const uid = "122974375";
       } else {
         console.log("No coin found in the latest announcement title.");
       }
@@ -103,11 +102,11 @@ const account: BinanceAccountInfo = {
 // 参数3：vip借贷 的uid
 // 参数4：vip抵押币种
 // 参数5：vip借贷金额 usdt
-
+const uid = "";
 setInterval(
-  () => checkForUpdates(account, 30000, "122974375", "TUSD", 10000), //主账号借5wu 的新上upbit 的币
+  () => checkForUpdates(account, 30000, uid, "TUSD", 10000), //主账号借5wu 的新上upbit 的币
   10000
 );
 
 // 初次运行时立即检查一次
-checkForUpdates(account, 30000, "122974375", "TUSD", 10000);
+checkForUpdates(account, 30000, uid, "TUSD", 10000);

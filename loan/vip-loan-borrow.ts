@@ -157,10 +157,10 @@ export async function vipLoanAll(
   loanAmount: string,
   collateralCoin: string,
   isFlexibleRate: boolean,
+  uid: string,
   loanTerm?: string
 ) {
   try {
-    const uid = "122974375";
     const loan = await binanceVipLoanBorrow(
       BinanceAccount,
       uid,

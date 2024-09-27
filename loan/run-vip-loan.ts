@@ -10,15 +10,16 @@ import { BinanceAccount } from "../utils/helper";
 
 async function run() {
   let hasBorrowed = false; // 标志来表示是否已经借到
+  const uid = ""; // 修改为自己的uid
   while (!hasBorrowed) {
     // 只要没有借到就继续
     try {
       const loans = [
-        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true),
-        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, "30"),
-        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, "60"),
-        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, false, "30"),
-        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, false, "60"),
+        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, uid),
+        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, "30", uid),
+        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, true, "60", uid),
+        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, false, "30", uid),
+        vipLoanAll(borrowCoin, borrowAmount, colleteralCoin, false, "60", uid),
       ];
       for (const loan of loans) {
         loan.then((result) => {

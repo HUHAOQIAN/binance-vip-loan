@@ -8,7 +8,7 @@ import {
   vipLoanAll,
   repayVipLoan,
   getOngoingOrders,
-} from "../utils/vip-loan-borrow";
+} from "./vip-loan-borrow";
 
 async function repayAll() {
   const getRepayInfo = await getOngoingOrders(BinanceAccount);
