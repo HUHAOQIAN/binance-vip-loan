@@ -46,3 +46,7 @@ export function decryptData(
   }
   return decryptedData;
 }
+import readlineSYnc from "readline-sync";
+const pass = readlineSYnc.question("Please enter the api password: ", {
+  hideEchoBack: true,
+});

@@ -1,5 +1,6 @@
 import { BinanceAccountInfo, binanceRequest } from "../utils/signature";
 import { BinanceAccount } from "../utils/helper";
+import { getTicker } from "../utils/all-functions";
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -153,6 +154,7 @@ export async function vipLoanRequestData(
 }
 
 export async function vipLoanAll(
+  account: BinanceAccountInfo,
   loanCoin: string,
   loanAmount: string,
   collateralCoin: string,
@@ -162,7 +164,7 @@ export async function vipLoanAll(
 ) {
   try {
     const loan = await binanceVipLoanBorrow(
-      BinanceAccount,
+      account,
       uid,
       loanCoin,
       loanAmount,
@@ -173,13 +175,91 @@ export async function vipLoanAll(
     );
     console.log(`loan id: ${loan.loanAccountId}`);
     const loanAccountId = loan.loanAccountId;
-    const requestStatus = await vipLoanRequestData(
-      BinanceAccount,
-      loanAccountId
-    );
+    const requestStatus = await vipLoanRequestData(account, loanAccountId);
     return requestStatus;
   } catch (e) {
     console.error(e);
   }
   //   await Promise.all([flexible, flexible30, flexible60, stable30, stable60]);
+}
+
+export async function vipLoanAllTerm(
+  account: BinanceAccountInfo,
+  borrowCoin: string,
+  borrowAmountUSDT: string,
+  collateralCoin: string,
+  uid: string
+) {
+  try {
+    const price = await getTicker(borrowCoin + "USDT");
+    const borrowAmount = (Number(borrowAmountUSDT) / price).toFixed(2);
+    const loans = [
+      vipLoanAll(account, borrowCoin, borrowAmount, collateralCoin, true, uid),
+      vipLoanAll(
+        account,
+        borrowCoin,
+        borrowAmount,
+        collateralCoin,
+        true,
+        uid,
+        "30"
+      ),
+      vipLoanAll(
+        account,
+        borrowCoin,
+        borrowAmount,
+        collateralCoin,
+        true,
+        uid,
+        "60"
+      ),
+      vipLoanAll(
+        account,
+        borrowCoin,
+        borrowAmount,
+        collateralCoin,
+        false,
+        uid,
+        "30"
+      ),
+      vipLoanAll(
+        account,
+        borrowCoin,
+        borrowAmount,
+        collateralCoin,
+        false,
+        uid,
+        "60"
+      ),
+    ];
+
+    await promiseAny(
+      loans.map((loan) =>
+        loan.then((result) => {
+          if (result) {
+            return true;
+          }
+          throw new Error("Loan not successful");
+        })
+      )
+    );
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function promiseAny<T>(promises: Promise<T>[]): Promise<T> {
+  return new Promise((resolve, reject) => {
+    let rejections = 0;
+    const errors: any[] = [];
+    promises.forEach((promise, index) => {
+      promise.then(resolve).catch((error) => {
+        errors[index] = error;
+        rejections += 1;
+        if (rejections === promises.length) {
+          reject({ errors, message: "All promises were rejected" });
+        }
+      });
+    });
+  });
 }
