@@ -22,7 +22,7 @@ async function fetchProxies() {
   try {
     const response = await axios.get(url);
     proxies = response.data.data;
-    console.log("代理列表已更新:", proxies);
+    // console.log("代理列表已更新:", proxies);
     return proxies;
   } catch (error) {
     console.error("获取代理时出错:", error);
@@ -32,7 +32,7 @@ async function fetchProxies() {
 // 获取随机代理
 function getRandomProxy(proxies: string[]) {
   const randomIndex = Math.floor(Math.random() * proxies.length);
-  console.log("Random index:", randomIndex);
+  // console.log("Random index:", randomIndex);
   return proxies[randomIndex];
 }
 // 定义检查公告更新的函数
@@ -45,9 +45,9 @@ async function checkForUpdates(
 ) {
   try {
     const userAgent = randomUseragent.getRandom();
-    console.log(userAgent);
+    // console.log(userAgent);
     const proxy = getRandomProxy(proxies);
-    console.log("Using proxy:", proxy);
+    // console.log("Using proxy:", proxy);
     const agent = new SocksProxyAgent(`socks5://${proxy}`);
     // 定义请求URL和请求头
     const url =
@@ -104,21 +104,12 @@ async function checkForUpdates(
         // await borrwoWithUsdt(account, coin, amountUSDT);
         await Promise.all([
           borrwoWithUsdt(account, coin, amountUSDTMarginBorrow),
-          vipLoanAllTerm(
-            account,
-            coin,
-            amountUSDTvipBorrow.toString(),
-            collateralCoin,
-            uid
-          ),
-          // binanceVipLoanBorrow(
+          // vipLoanAllTerm(
           //   account,
-          //   uid,
           //   coin,
           //   amountUSDTvipBorrow.toString(),
-          //   uid,
           //   collateralCoin,
-          //   true
+          //   uid
           // ),
         ]);
       } else {
@@ -140,5 +131,5 @@ setInterval(fetchProxies, 6 * 60 * 1000); // 每10分钟刷新一次
 const account = BINANCE_API_SECRET;
 const uid = "";
 
-setInterval(() => checkForUpdates(account, 100, uid, "TUSD", 10000), 100);
+setInterval(() => checkForUpdates(account, 30000, uid, "TUSD", 10000), 1000);
 // checkForUpdates(account, 100, uid, "TUSD", 1000);

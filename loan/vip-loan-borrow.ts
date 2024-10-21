@@ -190,62 +190,58 @@ export async function vipLoanAllTerm(
   collateralCoin: string,
   uid: string
 ) {
-  try {
-    const price = await getTicker(borrowCoin + "USDT");
-    const borrowAmount = (Number(borrowAmountUSDT) / price).toFixed(2);
-    const loans = [
-      vipLoanAll(account, borrowCoin, borrowAmount, collateralCoin, true, uid),
-      vipLoanAll(
-        account,
-        borrowCoin,
-        borrowAmount,
-        collateralCoin,
-        true,
-        uid,
-        "30"
-      ),
-      vipLoanAll(
-        account,
-        borrowCoin,
-        borrowAmount,
-        collateralCoin,
-        true,
-        uid,
-        "60"
-      ),
-      vipLoanAll(
-        account,
-        borrowCoin,
-        borrowAmount,
-        collateralCoin,
-        false,
-        uid,
-        "30"
-      ),
-      vipLoanAll(
-        account,
-        borrowCoin,
-        borrowAmount,
-        collateralCoin,
-        false,
-        uid,
-        "60"
-      ),
-    ];
+  const price = await getTicker(borrowCoin + "USDT");
+  const borrowAmount = (Number(borrowAmountUSDT) / price).toFixed(2);
+  const loans = [
+    vipLoanAll(account, borrowCoin, borrowAmount, collateralCoin, true, uid),
+    vipLoanAll(
+      account,
+      borrowCoin,
+      borrowAmount,
+      collateralCoin,
+      true,
+      uid,
+      "30"
+    ),
+    vipLoanAll(
+      account,
+      borrowCoin,
+      borrowAmount,
+      collateralCoin,
+      true,
+      uid,
+      "60"
+    ),
+    vipLoanAll(
+      account,
+      borrowCoin,
+      borrowAmount,
+      collateralCoin,
+      false,
+      uid,
+      "30"
+    ),
+    vipLoanAll(
+      account,
+      borrowCoin,
+      borrowAmount,
+      collateralCoin,
+      false,
+      uid,
+      "60"
+    ),
+  ];
 
-    await promiseAny(
-      loans.map((loan) =>
-        loan.then((result) => {
-          if (result) {
-            return true;
-          }
-          throw new Error("Loan not successful");
-        })
-      )
-    );
-  } catch (e) {
-    console.error(e);
-  }
+  await promiseAny(
+    loans.map((loan) =>
+      loan.then((result) => {
+        if (result) {
+          return true;
+        }
+        throw new Error("Loan not successful");
+      })
+    )
+  );
 }
 
 function promiseAny<T>(promises: Promise<T>[]): Promise<T> {
