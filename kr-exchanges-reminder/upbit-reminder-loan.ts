@@ -91,7 +91,10 @@ async function checkForUpdates(
       // 如果最新公告ID与上次检查时不同，则表示有新公告
       console.log("New announcement found:", latestAnnouncement);
       lastAnnouncementId = latestAnnouncement.id;
-      dingdingWithTimes(latestAnnouncement.title, 3);
+      dingdingWithTimes(
+        `${latestAnnouncement.title} -- ${new Date().toLocaleString()}`,
+        3
+      );
       // 提取最新公告标题中的币种字段
       const title = latestAnnouncement.title;
       const match = title.match(/\(([^)]+)\)/);
