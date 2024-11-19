@@ -1,4 +1,4 @@
-import { dingding, sleep } from "../utils/helper";
+import { BINANCE_API_SECRET, dingding, sleep } from "../utils/helper";
 import { getTicker } from "../utils/all-functions";
 import { BinanceAccountInfo, binanceRequest } from "../utils/signature";
 export async function marginBorrowRepay(
@@ -28,25 +28,14 @@ export async function marginBorrowRepay(
 export async function borrwoWithUsdt(
   account: BinanceAccountInfo,
   coin: string,
-  maxAmountUSDT: number,
-  times: number = 300
+  maxAmountUSDT: number
 ) {
-  let count = 0;
-  while (count < times) {
-    try {
-      const price = await getTicker(coin + "USDT");
-      const maxAmountBorrow = Number((maxAmountUSDT / price).toFixed(2));
-      const maxAmountBorrowAble = await maxBorrowable(account, coin);
-      const amountBorrow = Math.min(maxAmountBorrow, maxAmountBorrowAble);
-      await marginBorrowRepay(account, coin, amountBorrow.toString(), "BORROW");
-      dingding.sendTextMessage(`借到${amountBorrow}个${coin}`);
-      break;
-    } catch (e) {
-      console.log(e);
-      await sleep(300);
-      count++;
-    }
-  }
+  const price = await getTicker(coin + "USDT");
+  const maxAmountBorrow = Number((maxAmountUSDT / price).toFixed(2));
+  const maxAmountBorrowAble = await maxBorrowable(account, coin);
+  const amountBorrow = Math.min(maxAmountBorrow, maxAmountBorrowAble);
+  await marginBorrowRepay(account, coin, amountBorrow.toString(), "BORROW");
+  dingding.sendTextMessage(`借到${amountBorrow}个${coin}`);
 }
 // test();
 

@@ -10,11 +10,63 @@ import { binanceVipLoanBorrow, vipLoanAllTerm } from "../loan/vip-loan-borrow";
 import axios from "axios";
 import randomUseragent from "random-useragent";
 import { SocksProxyAgent } from "socks-proxy-agent";
+import fs from "fs";
+// 保存已处理的币种到文件
+// 保存已处理的币种到文件
+const filePath =
+  "/home/ubuntu/exchanges-ts/binance-github/kr-exchanges-reminder/upbit-listed-coins.json";
+// 保存已处理的币种到文件
+function saveProcessedCoins(coin: string) {
+  const data = {
+    coin,
+    timestamp: Date.now(),
+  };
+
+  try {
+    // 读取现有数据
+    let existingData = [];
+    try {
+      const fileContent = fs.readFileSync(filePath, "utf-8");
+      existingData = JSON.parse(fileContent);
+    } catch (error) {
+      // 文件不存在或为空,使用空数组
+    }
+    // 检查是否已存在相同币种
+    const coinExists = existingData.some((record) => record.coin === coin);
+    if (coinExists) {
+      console.log(`币种 ${coin} 已存在,跳过保存`);
+      return;
+    }
+    // 添加新数据
+    existingData.push(data);
+
+    // 写回文件
+    fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+    console.log(`币种 ${coin} 已保存到文件`);
+  } catch (error) {
+    console.error("保存处理记录失败:", error);
+  }
+}
+
+// 从文件加载已处理的币种
+function loadProcessedCoins() {
+  try {
+    const data = fs.readFileSync(filePath, "utf-8");
+    const records = JSON.parse(data);
+
+    // 转换为 Set
+    processedCoins = new Set(records.map((record) => record.coin));
+    console.log("已加载处理记录:", Array.from(processedCoins));
+  } catch (error) {
+    console.log("未找到处理记录文件,创建新的记录");
+    processedCoins = new Set();
+  }
+}
 // 保存上次检查的最新公告ID
 let lastAnnouncementId: any = null;
 // 保存代理列表
 let proxies: string[] = [];
-
+let processedCoins = new Set();
 // 获取代理列表的函数
 async function fetchProxies() {
   const url =
@@ -83,50 +135,81 @@ async function checkForUpdates(
       if (match) {
         const coin = match[1];
         // await borrwoWithUsdt(account, "EOS", 5); //测试
-        console.log(`Newly listed coin in the latest announcement: ${coin}`);
+        // console.log(`Newly listed coin in the latest announcement: ${coin}`);
+        processedCoins.add(coin);
+        saveProcessedCoins(coin);
+        console.log(`Initial coin ${coin} added to processed list`);
       } else {
         console.log("No coin found in the latest announcement title.");
       }
     } else if (latestAnnouncement.id !== lastAnnouncementId) {
       // 如果最新公告ID与上次检查时不同，则表示有新公告
-      console.log("New announcement found:", latestAnnouncement);
+
       lastAnnouncementId = latestAnnouncement.id;
-      dingdingWithTimes(
-        `${latestAnnouncement.title} -- ${new Date().toLocaleString()}`,
-        3
-      );
+
       // 提取最新公告标题中的币种字段
       const title = latestAnnouncement.title;
       const match = title.match(/\(([^)]+)\)/);
       if (match) {
         const coin = match[1];
-        console.log(
-          `Newly listed coin in the latest announcement: ${coin} ${new Date().toLocaleString()}`
-        );
-        //借贷的逻辑
-        // await borrwoWithUsdt(account, coin, amountUSDT);
-        await Promise.all([
-          borrwoWithUsdt(account, coin, amountUSDTMarginBorrow),
-          // vipLoanAllTerm(
-          //   account,
-          //   coin,
-          //   amountUSDTvipBorrow.toString(),
-          //   collateralCoin,
-          //   uid
-          // ),
-        ]);
-      } else {
-        console.log("No coin found in the latest announcement title.");
+        if (!processedCoins.has(coin)) {
+          dingdingWithTimes(
+            `${latestAnnouncement.title} -- ${new Date().toLocaleString()}`,
+            3
+          );
+          console.log("New announcement found:", latestAnnouncement);
+          console.log(
+            `Processing new coin: ${coin} at ${new Date().toLocaleString()}`
+          );
+          try {
+            const results = await Promise.allSettled([
+              borrwoWithUsdt(account, coin, amountUSDTMarginBorrow),
+              vipLoanAllTerm(
+                account,
+                coin,
+                amountUSDTvipBorrow.toString(),
+                collateralCoin,
+                uid
+              ),
+            ]);
+
+            // 检查每个借币操作的结果
+            results.forEach((result, index) => {
+              const borrowType = index === 0 ? "杠杠" : "viploan";
+              if (result.status === "fulfilled") {
+                console.log(`${coin} ${borrowType}借币成功`);
+              } else {
+                console.error(`${coin} ${borrowType}借币失败:`, result.reason);
+                dingding.sendTextMessage(
+                  `${coin} ${borrowType}借币失败: ${result.reason}`
+                );
+              }
+            });
+
+            // 处理完成后添加到已处理集合
+            processedCoins.add(coin);
+            console.log(`${coin} 处理完成，已添加到已处理列表`);
+            saveProcessedCoins(coin);
+          } catch (error) {
+            console.error(`处理 ${coin} 时发生错误:`, error);
+            dingding.sendTextMessage(
+              `处理 ${coin} 时发生错误: ${error.message}`
+            );
+          }
+        } else {
+          console.log(`${coin} 已经处理过，跳过`);
+        }
       }
     } else {
       console.log("No new announcements.", new Date().toLocaleString());
     }
   } catch (error) {
-    console.error("Error fetching announcements:", error);
+    console.error("Error fetching announcements:", error.message);
   }
 }
 
 // 初始化代理并设置定期刷新
+loadProcessedCoins();
 fetchProxies();
 setInterval(fetchProxies, 6 * 60 * 1000); // 每10分钟刷新一次
 
@@ -134,5 +217,5 @@ setInterval(fetchProxies, 6 * 60 * 1000); // 每10分钟刷新一次
 const account = BINANCE_API_SECRET;
 const uid = "";
 
-setInterval(() => checkForUpdates(account, 30000, uid, "TUSD", 10000), 1000);
+setInterval(() => checkForUpdates(account, 10000, uid, "TUSD", 10000), 1000);
 // checkForUpdates(account, 100, uid, "TUSD", 1000);
