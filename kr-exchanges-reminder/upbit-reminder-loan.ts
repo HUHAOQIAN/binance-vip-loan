@@ -13,8 +13,11 @@ import { SocksProxyAgent } from "socks-proxy-agent";
 import fs from "fs";
 // 保存已处理的币种到文件
 // 保存已处理的币种到文件
-const filePath =
-  "/home/ubuntu/exchanges-ts/binance-github/kr-exchanges-reminder/upbit-listed-coins.json";
+import path from "path";
+const filePath = path.join(__dirname, "upbit-listed-coins.json");
+
+// const filePath =
+//   "/home/ubuntu/exchanges-ts/binance-github/kr-exchanges-reminder/upbit-listed-coins.json";
 // 保存已处理的币种到文件
 function saveProcessedCoins(coin: string) {
   const data = {
