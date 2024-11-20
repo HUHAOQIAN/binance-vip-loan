@@ -153,9 +153,8 @@ async function checkForUpdates(
       if (match) {
         const coin = match[1];
         if (!processedCoins.has(coin)) {
-          dingdingWithTimes(
-            `${latestAnnouncement.title} -- ${new Date().toLocaleString()}`,
-            3
+          dingding.sendTextMessage(
+            `${latestAnnouncement.title} -- ${new Date().toLocaleString()}`
           );
           console.log("New announcement found:", latestAnnouncement);
           console.log(
@@ -177,11 +176,11 @@ async function checkForUpdates(
             results.forEach((result, index) => {
               const borrowType = index === 0 ? "杠杠" : "viploan";
               if (result.status === "fulfilled") {
-                console.log(`${coin} ${borrowType}借币成功`);
+                dingding.sendTextMessage(`${coin} ${borrowType} 借币成功}`);
               } else {
                 console.error(`${coin} ${borrowType}借币失败:`, result.reason);
                 dingding.sendTextMessage(
-                  `${coin} ${borrowType}借币失败: ${result.reason}`
+                  `${coin} ${borrowType} 借币失败} ${result.reason.message}`
                 );
               }
             });
@@ -215,7 +214,12 @@ setInterval(fetchProxies, 6 * 60 * 1000); // 每10分钟刷新一次
 
 // 定时检查公告更新
 const account = BINANCE_API_SECRET;
-const uid = "";
+const uid = "122974375"; // 修改为自己的uid
+const borrowAmountUSDT = 51000; //修改 借多少usdt 的币
+const collateralCoin = "FDUSD,BTC,ETH";
 
-setInterval(() => checkForUpdates(account, 10000, uid, "TUSD", 10000), 1000);
+setInterval(
+  () => checkForUpdates(account, 10000, uid, collateralCoin, borrowAmountUSDT),
+  1000
+);
 // checkForUpdates(account, 100, uid, "TUSD", 1000);
