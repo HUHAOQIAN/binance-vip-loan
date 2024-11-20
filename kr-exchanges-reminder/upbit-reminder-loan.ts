@@ -215,11 +215,19 @@ setInterval(fetchProxies, 6 * 60 * 1000); // 每10分钟刷新一次
 // 定时检查公告更新
 const account = BINANCE_API_SECRET;
 const uid = "122974375"; // 修改为自己的uid
-const borrowAmountUSDT = 51000; //修改 借多少usdt 的币
+const amountUSDTMarginBorrow = 100000;
+const borrowAmountUSDTViploan = 200000; //修改 借多少usdt 的币
 const collateralCoin = "FDUSD,BTC,ETH";
 
 setInterval(
-  () => checkForUpdates(account, 10000, uid, collateralCoin, borrowAmountUSDT),
+  () =>
+    checkForUpdates(
+      account,
+      amountUSDTMarginBorrow,
+      uid,
+      collateralCoin,
+      borrowAmountUSDTViploan
+    ),
   1000
 );
 // checkForUpdates(account, 100, uid, "TUSD", 1000);

@@ -43,8 +43,8 @@ async function attemptVipLoanAllTerm(
 
 const account = BINANCE_API_SECRET;
 const uid = "122974375"; // 修改为自己的uid
-const borrowCoin = "ETH"; //修改 借币种
-const borrowAmountUSDT = "51000"; //修改 借多少usdt 的币
+const borrowCoin = "FDUSD"; //修改 借币种
+const borrowAmountUSDT = "80000"; //修改 借多少usdt 的币
 const collateralCoin = "FDUSD,BTC,ETH"; //修改 抵押币种  多币种  逗号隔开  "TUSD,BUSD,USDT"
 attemptVipLoanAllTerm(
   account,
